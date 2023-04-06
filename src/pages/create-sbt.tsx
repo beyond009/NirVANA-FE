@@ -1,16 +1,29 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/Button'
+import { DragDropContext, Draggable } from 'react-beautiful-dnd'
 interface BasicInfoProps {
-	setSetp: (step: 1 | 2) => void
+	setStep: (step: 1 | 2) => void
 	setBasicInfo: (info: any) => void
 }
-const BasicInfo = ({ setSetp, setBasicInfo }: BasicInfoProps) => {
+interface PluginInfo {
+	setStep: (step: 1 | 2) => void
+	setPluginInfo: (info: any) => void
+}
+interface Plugin {
+	id: string
+	name: string
+	selected: boolean
+}
+const governancePlugins: Plugin[] = [{ id: 'governance_1', name: 'simple governance', selected: false }]
+const recoveryPlugins: Plugin[] = [{ id: 'recovery_1', name: 'signature recovery', selected: false }]
+const verifyPlugins: Plugin[] = [{ id: 'verify_1', name: 'signature verify', selected: false }]
+const BasicInfo = ({ setStep, setBasicInfo }: BasicInfoProps) => {
 	const [name, setName] = useState('')
 	const [desc, setDesc] = useState('')
 	const [url, setUrl] = useState('')
 	const handleNextStep = () => {
 		console.log('name', name)
-		setSetp(2)
+		setStep(2)
 		setBasicInfo({ name, desc, url })
 	}
 	return (
@@ -68,9 +81,73 @@ const BasicInfo = ({ setSetp, setBasicInfo }: BasicInfoProps) => {
 	)
 }
 
+const PluginInfo = ({ setStep, setPluginInfo }) => {
+	const [governance, setGovernance] = useState('')
+	const [recovery, setRecovery] = useState('')
+	const [verify, setVerify] = useState('')
+	const handleBack = () => {
+		setStep(1)
+	}
+	return (
+		<>
+			<div className="flex bg-white dark:bg-gray-700 rounded w-full min-h-[600px] p-12 mt-12">
+				<div className="flex flex-col flex-[0.5] p-6">
+					<div className="text-2xl font-semibold">Select plugins</div>
+					<div className="text-xl font-semibold mt-6">Governance</div>
+					{governancePlugins.map(plugin => {
+						return (
+							<div
+								className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+								key={plugin.id}
+							>
+								{plugin.name}
+							</div>
+						)
+					})}
+					<div className="text-xl font-semibold mt-6">Recovery</div>
+					{recoveryPlugins.map(plugin => {
+						return (
+							<div
+								className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+								key={plugin.id}
+							>
+								{plugin.name}
+							</div>
+						)
+					})}
+					<div className="text-xl font-semibold mt-6">verify</div>
+					{verifyPlugins.map(plugin => {
+						return (
+							<div
+								className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+								key={plugin.id}
+							>
+								{plugin.name}
+							</div>
+						)
+					})}
+				</div>
+				<div className=" h-[360] w-1 bg-slate-300 rounded-sm"></div>
+				<div className="flex flex-col flex-[0.5] p-6">
+					<div className="text-2xl font-semibold">Selected</div>
+				</div>
+			</div>
+			<div className="flex items-center justify-center w-full mt-12 gap-5">
+				<Button onClick={() => handleBack()} style={{ width: '120px' }}>
+					Back
+				</Button>
+				<Button onClick={() => handleBack()} style={{ width: '120px' }}>
+					Create SBT
+				</Button>
+			</div>
+		</>
+	)
+}
+
 const CreateSBT = () => {
 	const [step, setStep] = useState<1 | 2>(1)
 	const [basicInfo, setBasicInfo] = useState({ name: '', desc: '', url: '' })
+	const [pluginInfo, setPluginInfo] = useState()
 	return (
 		<div className="max-w-6xl flex flex-col px-24 items-start w-full mx-auto sm:px-6 lg:px-8 py-4 sm:pt-0">
 			<ol className="flex items-center w-full mt-12 text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
@@ -151,7 +228,8 @@ const CreateSBT = () => {
 					Confirmation
 				</li> */}
 			</ol>
-			{step === 1 && <BasicInfo setBasicInfo={setBasicInfo} setSetp={setStep} />}
+			{step === 1 && <BasicInfo setBasicInfo={setBasicInfo} setStep={setStep} />}
+			{step === 2 && <PluginInfo setStep={setStep} setPluginInfo={setPluginInfo} />}
 		</div>
 	)
 }
