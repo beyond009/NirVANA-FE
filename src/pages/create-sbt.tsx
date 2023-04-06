@@ -1,9 +1,18 @@
 import React, { useState } from 'react'
-const BasicInfo = () => {
+import { Button } from '@/components/Button'
+interface BasicInfoProps {
+	setSetp: (step: 1 | 2) => void
+	setBasicInfo: (info: any) => void
+}
+const BasicInfo = ({ setSetp, setBasicInfo }: BasicInfoProps) => {
 	const [name, setName] = useState('')
 	const [desc, setDesc] = useState('')
 	const [url, setUrl] = useState('')
-
+	const handleNextStep = () => {
+		console.log('name', name)
+		setSetp(2)
+		setBasicInfo({ name, desc, url })
+	}
 	return (
 		<>
 			<label
@@ -52,16 +61,24 @@ const BasicInfo = () => {
 					}}
 				/>
 			</div>
+			<div className="flex items-center justify-center w-full">
+				<Button onClick={() => handleNextStep()}>Next step</Button>
+			</div>
 		</>
 	)
 }
 
 const CreateSBT = () => {
-	const [step, setStep] = useState<number>(1)
+	const [step, setStep] = useState<1 | 2>(1)
+	const [basicInfo, setBasicInfo] = useState({ name: '', desc: '', url: '' })
 	return (
 		<div className="max-w-6xl flex flex-col px-24 items-start w-full mx-auto sm:px-6 lg:px-8 py-4 sm:pt-0">
 			<ol className="flex items-center w-full mt-12 text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
-				<li className="flex md:w-full items-center text-blue-600 dark:text-blue-500 sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+				<li
+					className={`flex md:w-full items-center  sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700 ${
+						step === 1 ? 'text-blue-600 dark:text-blue-500' : ''
+					}`}
+				>
 					<span className="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
 						{step === 1 ? (
 							<svg
@@ -83,7 +100,11 @@ const CreateSBT = () => {
 						Basic <span className="hidden sm:inline-flex sm:ml-2">Info</span>
 					</span>
 				</li>
-				<li className="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+				<li
+					className={`flex md:w-full items-center  sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700 ${
+						step === 2 ? 'text-blue-600 dark:text-blue-500' : ''
+					}`}
+				>
 					<span className="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
 						{step === 2 ? (
 							<svg
@@ -105,7 +126,11 @@ const CreateSBT = () => {
 						Choose <span className="hidden sm:inline-flex sm:ml-2">module</span>
 					</span>
 				</li>
-				<li className="flex items-center">
+				{/* <li
+					className={`flex md:w-full items-center  sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700 ${
+						step === 3 ? 'text-blue-600 dark:text-blue-500' : ''
+					}`}
+				>
 					{step === 3 ? (
 						<svg
 							aria-hidden="true"
@@ -124,9 +149,9 @@ const CreateSBT = () => {
 						<span className="mr-2">3</span>
 					)}
 					Confirmation
-				</li>
+				</li> */}
 			</ol>
-			{step === 1 && <BasicInfo />}
+			{step === 1 && <BasicInfo setBasicInfo={setBasicInfo} setSetp={setStep} />}
 		</div>
 	)
 }
