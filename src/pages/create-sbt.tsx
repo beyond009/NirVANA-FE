@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/Button'
-import { DragDropContext, Draggable } from 'react-beautiful-dnd'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 interface BasicInfoProps {
 	setStep: (step: 1 | 2) => void
 	setBasicInfo: (info: any) => void
@@ -85,52 +85,93 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 	const [governance, setGovernance] = useState('')
 	const [recovery, setRecovery] = useState('')
 	const [verify, setVerify] = useState('')
+	const [selected, setSeleeted] = useState<Plugin[]>([])
 	const handleBack = () => {
 		setStep(1)
+	}
+	const handleDropEnd = () => {
+		console.log('aaaas')
 	}
 	return (
 		<>
 			<div className="flex bg-white dark:bg-gray-700 rounded w-full min-h-[600px] p-12 mt-12">
-				<div className="flex flex-col flex-[0.5] p-6">
-					<div className="text-2xl font-semibold">Select plugins</div>
-					<div className="text-xl font-semibold mt-6">Governance</div>
-					{governancePlugins.map(plugin => {
-						return (
-							<div
-								className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
-								key={plugin.id}
-							>
-								{plugin.name}
-							</div>
-						)
-					})}
-					<div className="text-xl font-semibold mt-6">Recovery</div>
-					{recoveryPlugins.map(plugin => {
-						return (
-							<div
-								className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
-								key={plugin.id}
-							>
-								{plugin.name}
-							</div>
-						)
-					})}
-					<div className="text-xl font-semibold mt-6">verify</div>
-					{verifyPlugins.map(plugin => {
-						return (
-							<div
-								className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
-								key={plugin.id}
-							>
-								{plugin.name}
-							</div>
-						)
-					})}
-				</div>
-				<div className=" h-[360] w-1 bg-slate-300 rounded-sm"></div>
-				<div className="flex flex-col flex-[0.5] p-6">
-					<div className="text-2xl font-semibold">Selected</div>
-				</div>
+				<DragDropContext
+					onDropEnd={() => {
+						handleDropEnd()
+					}}
+				>
+					<div className="flex flex-col flex-[0.5] p-6">
+						<div className="text-2xl font-semibold">Select plugins</div>
+
+						<Droppable droppableId="Governance">
+							{(droppableProvided, droppableSnapshot) => (
+								<div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+									<div className="text-xl font-semibold mt-6">Governance</div>
+									{governancePlugins.map((plugin, index) => {
+										return (
+											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
+												{provided => (
+													<div
+														className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														{...provided.draggableProps}
+														{...provided.dragHandleProps}
+														ref={provided.innerRef}
+													>
+														{plugin.name}
+													</div>
+												)}
+											</Draggable>
+										)
+									})}
+								</div>
+							)}
+						</Droppable>
+						<div className="text-xl font-semibold mt-6">Recovery</div>
+						{recoveryPlugins.map(plugin => {
+							return (
+								<div
+									className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+									key={plugin.id}
+								>
+									{plugin.name}
+								</div>
+							)
+						})}
+						<div className="text-xl font-semibold mt-6">verify</div>
+						{verifyPlugins.map(plugin => {
+							return (
+								<div
+									className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+									key={plugin.id}
+								>
+									{plugin.name}
+								</div>
+							)
+						})}
+					</div>
+					<div className=" h-[360] w-1 bg-slate-300 rounded-sm"></div>
+					<div className="flex flex-col flex-[0.5] p-6">
+						<div className="text-2xl font-semibold">Selected</div>
+						<>
+							<Droppable droppableId="Selected">
+								{(droppableProvided, droppableSnapshot) => (
+									<div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+										{selected.map(v => {
+											return (
+												<div
+													key={v.id}
+													className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+												>
+													{v.name}
+												</div>
+											)
+										})}
+									</div>
+								)}
+							</Droppable>
+						</>
+					</div>
+				</DragDropContext>
 			</div>
 			<div className="flex items-center justify-center w-full mt-12 gap-5">
 				<Button onClick={() => handleBack()} style={{ width: '120px' }}>
