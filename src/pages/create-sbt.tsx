@@ -14,7 +14,10 @@ interface Plugin {
 	name: string
 	selected: boolean
 }
-const governancePlugins: Plugin[] = [{ id: 'governance_1', name: 'simple governance', selected: false }]
+const governancePlugins: Plugin[] = [
+	{ id: 'governance_1', name: 'simple governance', selected: false },
+	{ id: 'governance_2', name: 'token governance', selected: false },
+]
 const recoveryPlugins: Plugin[] = [{ id: 'recovery_1', name: 'signature recovery', selected: false }]
 const verifyPlugins: Plugin[] = [{ id: 'verify_1', name: 'signature verify', selected: false }]
 const BasicInfo = ({ setStep, setBasicInfo }: BasicInfoProps) => {
@@ -82,32 +85,80 @@ const BasicInfo = ({ setStep, setBasicInfo }: BasicInfoProps) => {
 }
 
 const PluginInfo = ({ setStep, setPluginInfo }) => {
-	const [governance, setGovernance] = useState('')
-	const [recovery, setRecovery] = useState('')
-	const [verify, setVerify] = useState('')
-	const [selected, setSeleeted] = useState<Plugin[]>([])
+	const [governance, setGovernance] = useState(governancePlugins)
+	const [recovery, setRecovery] = useState(recoveryPlugins)
+	const [verify, setVerify] = useState(verifyPlugins)
+	const [selected, setSelected] = useState<Plugin[]>([])
 	const handleBack = () => {
 		setStep(1)
 	}
-	const handleDropEnd = () => {
-		console.log('aaaas')
+	const handleDragEnd = ({ source, destination }) => {
+		console.log('drop end')
+		console.log(source, destination)
+		if (!destination) return
+		if (destination.droppableId === 'Selected') {
+			const newSelected = [...selected]
+			if (source.droppableId === 'Governance') {
+				newSelected.splice(destination.index, 0, governance[source.index])
+				const newGovernance = [...governance]
+				newGovernance.splice(source.index, 1)
+				setGovernance(newGovernance)
+				setSelected(newSelected)
+			}
+			if (source.droppableId === 'Recovery') {
+				newSelected.splice(destination.index, 0, recoveryPlugins[source.index])
+				const newRecovery = [...recovery]
+				newRecovery.splice(source.index, 1)
+				setRecovery(newRecovery)
+				setSelected(newSelected)
+			}
+			if (source.droppableId === 'Verify') {
+				newSelected.splice(destination.index, 0, verifyPlugins[source.index])
+				const newVerify = [...verify]
+				newVerify.splice(source.index, 1)
+				setVerify(newVerify)
+				setSelected(newSelected)
+			}
+			console.log(newSelected, 'aa')
+		}
 	}
+
 	return (
 		<>
 			<div className="flex bg-white dark:bg-gray-700 rounded w-full min-h-[600px] p-12 mt-12">
-				<DragDropContext
-					onDropEnd={() => {
-						handleDropEnd()
-					}}
-				>
+				<DragDropContext onDragEnd={handleDragEnd}>
 					<div className="flex flex-col flex-[0.5] p-6">
 						<div className="text-2xl font-semibold">Select plugins</div>
-
 						<Droppable droppableId="Governance">
-							{(droppableProvided, droppableSnapshot) => (
-								<div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+							{provided => (
+								<div ref={provided.innerRef} {...provided.droppableProps}>
 									<div className="text-xl font-semibold mt-6">Governance</div>
-									{governancePlugins.map((plugin, index) => {
+									{governance.map((plugin, index) => {
+										return (
+											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
+												{provided => (
+													<div
+														className="card flex items-center p-6 h-14 my-4 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														{...provided.draggableProps}
+														{...provided.dragHandleProps}
+														ref={provided.innerRef}
+													>
+														{plugin.name}
+														{provided.placeholder}
+													</div>
+												)}
+											</Draggable>
+										)
+									})}
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+						<Droppable droppableId="Recovery">
+							{provided => (
+								<div ref={provided.innerRef} {...provided.droppableProps}>
+									<div className="text-xl font-semibold mt-6">Recovery</div>
+									{recovery.map((plugin, index) => {
 										return (
 											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
 												{provided => (
@@ -118,54 +169,67 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 														ref={provided.innerRef}
 													>
 														{plugin.name}
+														{provided.placeholder}
 													</div>
 												)}
 											</Draggable>
 										)
 									})}
+									{provided.placeholder}
 								</div>
 							)}
 						</Droppable>
-						<div className="text-xl font-semibold mt-6">Recovery</div>
-						{recoveryPlugins.map(plugin => {
-							return (
-								<div
-									className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
-									key={plugin.id}
-								>
-									{plugin.name}
+
+						<Droppable droppableId="Verify">
+							{provided => (
+								<div ref={provided.innerRef} {...provided.droppableProps}>
+									<div className="text-xl font-semibold mt-6">verify</div>
+									{verify.map((plugin, index) => {
+										return (
+											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
+												{provided => (
+													<div
+														className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														{...provided.draggableProps}
+														{...provided.dragHandleProps}
+														ref={provided.innerRef}
+													>
+														{plugin.name}
+														{provided.placeholder}
+													</div>
+												)}
+											</Draggable>
+										)
+									})}
+									{provided.placeholder}
 								</div>
-							)
-						})}
-						<div className="text-xl font-semibold mt-6">verify</div>
-						{verifyPlugins.map(plugin => {
-							return (
-								<div
-									className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
-									key={plugin.id}
-								>
-									{plugin.name}
-								</div>
-							)
-						})}
+							)}
+						</Droppable>
 					</div>
 					<div className=" h-[360] w-1 bg-slate-300 rounded-sm"></div>
 					<div className="flex flex-col flex-[0.5] p-6">
-						<div className="text-2xl font-semibold">Selected</div>
 						<>
 							<Droppable droppableId="Selected">
-								{(droppableProvided, droppableSnapshot) => (
-									<div ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
-										{selected.map(v => {
-											return (
-												<div
-													key={v.id}
-													className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
-												>
-													{v.name}
-												</div>
-											)
-										})}
+								{provided => (
+									<div className="min-h-[300px]">
+										<div className="text-2xl font-semibold">Selected</div>
+										<div
+											ref={provided.innerRef}
+											{...provided.droppableProps}
+											className=" min-h-[600px]"
+										>
+											{selected.map(v => {
+												return (
+													<div
+														key={v.id}
+														className="card flex items-center p-6 my-4 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+													>
+														{v.name}
+													</div>
+												)
+											})}
+										</div>
+										{provided.placeholder}
 									</div>
 								)}
 							</Droppable>
