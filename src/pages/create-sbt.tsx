@@ -123,6 +123,7 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 		}
 	}
 
+	const handleCreateSBT = () => {}
 	return (
 		<>
 			<div className="flex bg-white dark:bg-gray-700 rounded w-full min-h-[600px] p-12 mt-12">
