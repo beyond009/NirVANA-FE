@@ -1,15 +1,18 @@
 import React, { useState } from 'react'
 import { Button } from '@/components/Button'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
+import { useAccount } from 'wagmi'
+import { abi as diamondFactoryABI } from '@/abi/DiamondFactory.json'
+import { ethers } from 'ethers'
 interface BasicInfoProps {
 	setStep: (step: 1 | 2) => void
 	setBasicInfo: (info: any) => void
 }
-interface PluginInfo {
+interface PluginProps {
 	setStep: (step: 1 | 2) => void
-	setPluginInfo: (info: any) => void
 	setSelected: (info: Plugin[]) => void
 	selected: Plugin[]
+	handleCreateSBT: () => void
 }
 interface Plugin {
 	id: string
@@ -94,7 +97,7 @@ const BasicInfo = ({ setStep, setBasicInfo }: BasicInfoProps) => {
 	)
 }
 
-const PluginInfo = ({ setStep, setPluginInfo, setSelected, selected }) => {
+const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginProps) => {
 	const [governance, setGovernance] = useState(governancePlugins)
 	const [recovery, setRecovery] = useState(recoveryPlugins)
 	const [verify, setVerify] = useState(verifyPlugins)
@@ -140,7 +143,6 @@ const PluginInfo = ({ setStep, setPluginInfo, setSelected, selected }) => {
 		}
 	}
 
-	const handleCreateSBT = () => {}
 	return (
 		<>
 			<div className="flex bg-white dark:bg-gray-700 rounded w-full min-h-[600px] p-12 mt-12">
@@ -283,7 +285,7 @@ const PluginInfo = ({ setStep, setPluginInfo, setSelected, selected }) => {
 				<Button onClick={() => handleBack()} style={{ width: '120px' }}>
 					Back
 				</Button>
-				<Button onClick={() => handleBack()} style={{ width: '120px' }}>
+				<Button onClick={handleCreateSBT} style={{ width: '120px' }}>
 					Create SBT
 				</Button>
 			</div>
@@ -294,8 +296,21 @@ const PluginInfo = ({ setStep, setPluginInfo, setSelected, selected }) => {
 const CreateSBT = () => {
 	const [step, setStep] = useState<1 | 2>(1)
 	const [basicInfo, setBasicInfo] = useState({ name: '', desc: '', url: '' })
-	const [pluginInfo, setPluginInfo] = useState()
 	const [selected, setSelected] = useState<Plugin[]>([])
+	const { address, isConnected } = useAccount()
+	const handleCreateSBT = async () => {
+		if (isConnected) {
+			const provider = new ethers.providers.Web3Provider(window.ethereum)
+			const signer = provider.getSigner()
+			const diamondFactoryContract = new ethers.Contract(
+				'0x6e0e2b32EBE9c3FCF82781374Ac9F9d209c11b14',
+				diamondFactoryABI,
+				signer
+			)
+			const tx = await diamondFactoryContract.initDeployFacet()
+			console.log(await tx.wait())
+		}
+	}
 	return (
 		<div className="max-w-6xl flex flex-col px-24 items-start w-full mx-auto sm:px-6 lg:px-8 py-4 sm:pt-0">
 			<ol className="flex items-center w-full mt-12 text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
@@ -380,9 +395,9 @@ const CreateSBT = () => {
 			{step === 2 && (
 				<PluginInfo
 					setStep={setStep}
-					setPluginInfo={setPluginInfo}
 					selected={selected}
 					setSelected={setSelected}
+					handleCreateSBT={handleCreateSBT}
 				/>
 			)}
 		</div>
