@@ -15,7 +15,7 @@ interface Plugin {
 	selected: boolean
 }
 const tokenstandardPlugins: Plugin[] = [
-	{ id: 'tokenstandard_1', name: 'simple erc721 like', selected: false },
+	{ id: 'tokenstandard_1', name: 'ERC5192', selected: false },
 	{ id: 'tokenstandard_2', name: 'ERC5727', selected: false },
 	{ id: 'tokenstandard_3', name: 'ERC6147', selected: false },
 ]
