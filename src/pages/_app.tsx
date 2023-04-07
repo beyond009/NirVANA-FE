@@ -22,7 +22,7 @@ const App = ({ Component, pageProps }) => {
 			/>
 			{/* Same as */}
 			<Web3Provider>
-				<div className="w-full flex flex-col items-center px-28 relative bg-gray-100 dark:bg-gray-900 min-h-screen">
+				<div className="w-full flex flex-col items-center px-28 relative dark:bg-gray-900 min-h-screen bg-[url('/hero-pattern.svg')]">
 					<Header />
 					<Component {...pageProps} />
 					<ThemeSwitcher className="absolute bottom-6 right-6" />
