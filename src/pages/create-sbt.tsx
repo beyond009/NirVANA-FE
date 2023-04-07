@@ -14,11 +14,19 @@ interface Plugin {
 	name: string
 	selected: boolean
 }
+const tokenstandardPlugins: Plugin[] = [
+	{ id: 'tokenstandard_1', name: 'simple erc721 like', selected: false },
+	{ id: 'tokenstandard_2', name: 'ERC5727', selected: false },
+	{ id: 'tokenstandard_3', name: 'ERC6147', selected: false },
+]
 const governancePlugins: Plugin[] = [
 	{ id: 'governance_1', name: 'simple governance', selected: false },
 	{ id: 'governance_2', name: 'token governance', selected: false },
 ]
-const recoveryPlugins: Plugin[] = [{ id: 'recovery_1', name: 'signature recovery', selected: false }]
+const recoveryPlugins: Plugin[] = [
+	{ id: 'recovery_1', name: 'signature recovery', selected: false },
+	{ id: 'recovery_2', name: 'social recovery', selected: false },
+]
 const verifyPlugins: Plugin[] = [{ id: 'verify_1', name: 'signature verify', selected: false }]
 const BasicInfo = ({ setStep, setBasicInfo }: BasicInfoProps) => {
 	const [name, setName] = useState('')
@@ -88,6 +96,7 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 	const [governance, setGovernance] = useState(governancePlugins)
 	const [recovery, setRecovery] = useState(recoveryPlugins)
 	const [verify, setVerify] = useState(verifyPlugins)
+	const [tokenstandard, setTokenstandard] = useState(tokenstandardPlugins)
 	const [selected, setSelected] = useState<Plugin[]>([])
 	const handleBack = () => {
 		setStep(1)
@@ -103,6 +112,13 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 				const newGovernance = [...governance]
 				newGovernance.splice(source.index, 1)
 				setGovernance(newGovernance)
+				setSelected(newSelected)
+			}
+			if (source.droppableId === 'Tokenstandard') {
+				newSelected.splice(destination.index, 0, tokenstandard[source.index])
+				const newTokenstandard = [...tokenstandard]
+				newTokenstandard.splice(source.index, 1)
+				setTokenstandard(newTokenstandard)
 				setSelected(newSelected)
 			}
 			if (source.droppableId === 'Recovery') {
@@ -130,6 +146,31 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 				<DragDropContext onDragEnd={handleDragEnd}>
 					<div className="flex flex-col flex-[0.5] p-6">
 						<div className="text-2xl font-semibold">Select plugins</div>
+						<Droppable droppableId="Tokenstandard">
+							{provided => (
+								<div ref={provided.innerRef} {...provided.droppableProps}>
+									<div className="text-xl font-semibold mt-6">Tokenstandard</div>
+									{tokenstandard.map((plugin, index) => {
+										return (
+											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
+												{provided => (
+													<div
+														className="card flex items-center p-6 h-14 my-4 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														{...provided.draggableProps}
+														{...provided.dragHandleProps}
+														ref={provided.innerRef}
+													>
+														{plugin.name}
+														{provided.placeholder}
+													</div>
+												)}
+											</Draggable>
+										)
+									})}
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
 						<Droppable droppableId="Governance">
 							{provided => (
 								<div ref={provided.innerRef} {...provided.droppableProps}>
@@ -164,7 +205,7 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
 												{provided => (
 													<div
-														className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														className="card flex items-center p-6 h-14 my-4 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
 														{...provided.draggableProps}
 														{...provided.dragHandleProps}
 														ref={provided.innerRef}
@@ -180,7 +221,6 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 								</div>
 							)}
 						</Droppable>
-
 						<Droppable droppableId="Verify">
 							{provided => (
 								<div ref={provided.innerRef} {...provided.droppableProps}>
@@ -190,7 +230,7 @@ const PluginInfo = ({ setStep, setPluginInfo }) => {
 											<Draggable draggableId={plugin.id} index={index} key={plugin.id}>
 												{provided => (
 													<div
-														className="card flex items-center p-6 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														className="card flex items-center p-6 h-14 my-4 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
 														{...provided.draggableProps}
 														{...provided.dragHandleProps}
 														ref={provided.innerRef}
