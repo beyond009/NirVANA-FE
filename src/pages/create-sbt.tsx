@@ -3,6 +3,8 @@ import { Button } from '@/components/Button'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { useAccount } from 'wagmi'
 import { abi as diamondFactoryABI } from '@/abi/DiamondFactory.json'
+import { abi as diamondInitABI } from '@/abi/DiamondInit.json'
+import { facetCuts } from '@/utils/utils'
 import { ethers } from 'ethers'
 interface BasicInfoProps {
 	setStep: (step: 1 | 2) => void
@@ -307,7 +309,24 @@ const CreateSBT = () => {
 				diamondFactoryABI,
 				signer
 			)
-			const tx = await diamondFactoryContract.initDeployFacet()
+			const diamondInitContract = new ethers.Contract(
+				'0x6e0e2b32EBE9c3FCF82781374Ac9F9d209c11b14',
+				diamondInitABI,
+				signer
+			)
+			let functionCall = diamondInitContract.interface.encodeFunctionData('init')
+			const diamondArgs = {
+				owner: address,
+				init: '0xBB1aA056769D0b1639309f08480B8Bedc57BA9Ef',
+				initCalldata: functionCall,
+			}
+			const tx = await diamondFactoryContract.deployDiamond(facetCuts, diamondArgs)
+			const res = await tx.wait()
+			let iDiamondFactory = new ethers.utils.Interface(diamondFactoryABI)
+			// const abiDecoder = new ethers.utils.AbiCoder()
+
+			console.log(res.events[0].data, 'aaaaaaaa', iDiamondFactory.decodeEventLog('DiamondDeployed', res.events))
+			// console.log(diamondFactoryContract.parseEvent(res.event))
 			console.log(await tx.wait())
 		}
 	}
