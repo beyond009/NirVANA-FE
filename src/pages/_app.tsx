@@ -4,6 +4,7 @@ import Web3Provider from '@/components/Web3Provider'
 import { Header } from '@/components/Header'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const App = ({ Component, pageProps }) => {
 	return (
@@ -20,7 +21,6 @@ const App = ({ Component, pageProps }) => {
 				pauseOnHover
 				theme="light"
 			/>
-			{/* Same as */}
 			<Web3Provider>
 				<div className="w-full flex flex-col items-center px-28 relative dark:bg-gray-900 min-h-screen bg-[url('/hero-pattern.svg')]">
 					<Header />

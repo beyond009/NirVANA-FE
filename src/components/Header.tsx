@@ -2,9 +2,12 @@ import React from 'react'
 import ConnectWallet from '@/components/ConnectWallet'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { UserCircleIcon } from '@heroicons/react/outline'
+import { useAccount } from 'wagmi'
 
 export const Header = () => {
 	const router = useRouter()
+	const { address } = useAccount()
 	return (
 		<div className="relative flex justify-between w-full max-w-6xl mx-auto py-12 sm:px-6 lg:px-8">
 			<div className="flex items-center text-3xl m-[-22px] gap-3 font-serif">
@@ -50,8 +53,14 @@ export const Header = () => {
 						</a>
 					</li>
 				</ul>
-				<div className="flex ml-6">
+				<div className="flex ml-6 gap-8 items-center">
 					<ConnectWallet />
+					<UserCircleIcon
+						className="h-8 w-8 cursor-pointer"
+						onClick={() => {
+							router.push('/profile/' + address)
+						}}
+					/>
 				</div>
 			</div>
 		</div>
