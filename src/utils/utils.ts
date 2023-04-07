@@ -1,3 +1,5 @@
+import { ethers } from 'ethers'
+import { abi } from '../abi/DAOFacet.json'
 export const sbtSelector = [
 	'0x1f931c1c',
 	'0xcdffacc6',
@@ -72,3 +74,19 @@ export function getARemovedBSelectorsBySelector(a: string[], b: string[]) {
 		if (!b.includes(v)) return v
 	})
 }
+
+export function getFunctionSignatures(abi) {
+	const functionSignatures = []
+	abi.forEach(item => {
+		if (item.type === 'function') {
+			const funcName = item.name
+			const inputs = item.inputs.map(input => input.type).join(',')
+			const signature = `${funcName}(${inputs})`
+			functionSignatures.push(signature)
+		}
+	})
+	return functionSignatures
+}
+
+export const SimpleDAOFacetSelectors = ['0x2fdae3c5', '0x0d61b519', '0x0121b93f']
+export const SignatureRecoveryFacetSelectors = ['0x379f4e66', '0x01ffc9a7']

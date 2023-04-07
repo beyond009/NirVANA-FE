@@ -4,7 +4,12 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { useAccount } from 'wagmi'
 import { abi as diamondFactoryABI } from '@/abi/DiamondFactory.json'
 import { abi as diamondInitABI } from '@/abi/DiamondInit.json'
-import { facetCuts } from '@/utils/utils'
+import {
+	facetCuts,
+	getARemovedBSelectorsBySelector,
+	SimpleDAOFacetSelectors,
+	SignatureRecoveryFacetSelectors,
+} from '@/utils/utils'
 import { ethers } from 'ethers'
 import { toast } from 'react-toastify'
 interface BasicInfoProps {
@@ -320,6 +325,23 @@ const CreateSBT = () => {
 				init: '0xBB1aA056769D0b1639309f08480B8Bedc57BA9Ef',
 				initCalldata: functionCall,
 			}
+
+			selected.forEach(plugin => {
+				switch (plugin.id) {
+					case 'governance_1': {
+						const simpleGovernceSelecters = getARemovedBSelectorsBySelector(
+							SimpleDAOFacetSelectors,
+							facetCuts[facetCuts.length - 1].functionSelectors
+						)
+						facetCuts.push({
+							facetAddress: '0x2688403dc98EB31f51eD3077274Cee8Cd8A9FFB7',
+							action: 0,
+							functionSelectors: simpleGovernceSelecters,
+						})
+						break
+					}
+				}
+			})
 			diamondFactoryContract.once('DiamondDeployed', address => {
 				console.log('Diamond Deployed', address)
 			})
@@ -386,30 +408,6 @@ const CreateSBT = () => {
 						Choose <span className="hidden sm:inline-flex sm:ml-2">module</span>
 					</span>
 				</li>
-				{/* <li
-					className={`flex md:w-full items-center  sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700 ${
-						step === 3 ? 'text-blue-600 dark:text-blue-500' : ''
-					}`}
-				>
-					{step === 3 ? (
-						<svg
-							aria-hidden="true"
-							className="w-4 h-4 mr-2 sm:w-5 sm:h-5"
-							fill="currentColor"
-							viewBox="0 0 20 20"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								fillRule="evenodd"
-								d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-								clipRule="evenodd"
-							></path>
-						</svg>
-					) : (
-						<span className="mr-2">3</span>
-					)}
-					Confirmation
-				</li> */}
 			</ol>
 			{step === 1 && <BasicInfo setBasicInfo={setBasicInfo} setStep={setStep} />}
 			{step === 2 && (
