@@ -31,6 +31,7 @@ const tokenstandardPlugins: Plugin[] = [
 	{ id: 'tokenstandard_1', name: 'ERC5192', selected: false },
 	{ id: 'tokenstandard_2', name: 'ERC5727', selected: false },
 	{ id: 'tokenstandard_3', name: 'ERC6147', selected: false },
+	{ id: 'tokenstandard_4', name: 'ZKSBT', selected: false },
 ]
 const governancePlugins: Plugin[] = [
 	{ id: 'governance_1', name: 'simple governance', selected: false },
@@ -329,6 +330,7 @@ const CreateSBT = () => {
 			selected.forEach(plugin => {
 				switch (plugin.id) {
 					case 'governance_1': {
+						console.log(plugin)
 						const simpleGovernceSelecters = getARemovedBSelectorsBySelector(
 							SimpleDAOFacetSelectors,
 							facetCuts[facetCuts.length - 1].functionSelectors
@@ -342,9 +344,18 @@ const CreateSBT = () => {
 					}
 				}
 			})
-			diamondFactoryContract.once('DiamondDeployed', address => {
-				console.log('Diamond Deployed', address)
+
+			diamondFactoryContract.once('DiamondDeployed', contractAddr => {
+				const res = JSON.parse(localStorage.getItem('SBT' + address)) || []
+				res.push({
+					address: contractAddr,
+					name: basicInfo.name,
+					desc: basicInfo.desc,
+					url: basicInfo.url,
+				})
+				localStorage.setItem('SBT' + address, JSON.stringify(res))
 			})
+
 			const tx = await diamondFactoryContract.deployDiamond(facetCuts, diamondArgs)
 			toast.promise(tx.wait(), {
 				pending: 'Transaction pending 🤞',

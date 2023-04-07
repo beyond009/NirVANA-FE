@@ -3,8 +3,10 @@ import { APP_NAME } from '@/lib/consts'
 import ConnectWallet from '@/components/ConnectWallet'
 import { BookOpenIcon, CodeIcon, ShareIcon } from '@heroicons/react/outline'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
+import { useRouter } from 'next/router'
 
 const Home: FC = () => {
+	const router = useRouter()
 	return (
 		<section className="">
 			<div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16">
@@ -63,7 +65,9 @@ const Home: FC = () => {
 							create a customized token that meets their specific needs.
 						</p>
 						<a
-							href="#"
+							onClick={() => {
+								router.push('/create-sbt')
+							}}
 							className="inline-flex justify-center items-center py-2.5 px-5 text-base font-medium mt-14 text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
 						>
 							Create sbt
@@ -97,7 +101,9 @@ const Home: FC = () => {
 							user or entity, allowing for tailored functionality and control.
 						</p>
 						<a
-							href="#"
+							onClick={() => {
+								router.push('/create-plugin')
+							}}
 							className="inline-flex justify-center items-center py-2.5 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900"
 						>
 							Create plugin
