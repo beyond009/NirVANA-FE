@@ -8,6 +8,8 @@ interface BasicInfoProps {
 interface PluginInfo {
 	setStep: (step: 1 | 2) => void
 	setPluginInfo: (info: any) => void
+	setSelected: (info: Plugin[]) => void
+	selected: Plugin[]
 }
 interface Plugin {
 	id: string
@@ -92,12 +94,11 @@ const BasicInfo = ({ setStep, setBasicInfo }: BasicInfoProps) => {
 	)
 }
 
-const PluginInfo = ({ setStep, setPluginInfo }) => {
+const PluginInfo = ({ setStep, setPluginInfo, setSelected, selected }) => {
 	const [governance, setGovernance] = useState(governancePlugins)
 	const [recovery, setRecovery] = useState(recoveryPlugins)
 	const [verify, setVerify] = useState(verifyPlugins)
 	const [tokenstandard, setTokenstandard] = useState(tokenstandardPlugins)
-	const [selected, setSelected] = useState<Plugin[]>([])
 	const handleBack = () => {
 		setStep(1)
 	}
@@ -294,6 +295,7 @@ const CreateSBT = () => {
 	const [step, setStep] = useState<1 | 2>(1)
 	const [basicInfo, setBasicInfo] = useState({ name: '', desc: '', url: '' })
 	const [pluginInfo, setPluginInfo] = useState()
+	const [selected, setSelected] = useState<Plugin[]>([])
 	return (
 		<div className="max-w-6xl flex flex-col px-24 items-start w-full mx-auto sm:px-6 lg:px-8 py-4 sm:pt-0">
 			<ol className="flex items-center w-full mt-12 text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
@@ -375,7 +377,14 @@ const CreateSBT = () => {
 				</li> */}
 			</ol>
 			{step === 1 && <BasicInfo setBasicInfo={setBasicInfo} setStep={setStep} />}
-			{step === 2 && <PluginInfo setStep={setStep} setPluginInfo={setPluginInfo} />}
+			{step === 2 && (
+				<PluginInfo
+					setStep={setStep}
+					setPluginInfo={setPluginInfo}
+					selected={selected}
+					setSelected={setSelected}
+				/>
+			)}
 		</div>
 	)
 }
