@@ -1,8 +1,38 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
+import { ethers } from 'ethers'
+import { useAccount } from 'wagmi'
+import { abi as diamondLoupeFacetABI } from '@/abi/DiamondLoupeFacet.json'
+const pluginInfo = {
+	simpleGovernance: {
+		name: 'Simple governace',
+		desc: 'a simple DAO with proposal creation, voting, and execution functionality to issue sbt.',
+	},
+	signatureRecovery: {
+		name: 'Signature Recovery',
+		desc: 'allowing users to recover owned sbts from a signed message,The contract leverages EIP-712 for typed data hashing and ECDSA for signature recovery.',
+	},
+}
 export const SBT = () => {
 	const router = useRouter()
+	const { address } = useAccount()
 	const { contractAddress, name, desc } = router.query
+	const fetch = useCallback(async () => {
+		console.log('aaaa')
+		if (address && contractAddress) {
+			const diamondContract = new ethers.Contract(
+				contractAddress as string,
+				diamondLoupeFacetABI,
+				new ethers.providers.Web3Provider(window.ethereum)
+			)
+			const res = await diamondContract.facetAddresses()
+			console.log(res, 'abs')
+		}
+	}, [address, contractAddress])
+
+	useEffect(() => {
+		fetch()
+	}, [fetch])
 	return (
 		<div className="flex flex-col w-full min-h-screen max-w-6xl px-8 gap-6">
 			<div className="text-2xl">SBT Name: {name}</div>
