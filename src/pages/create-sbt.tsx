@@ -23,7 +23,7 @@ interface PluginProps {
 	selected: Plugin[]
 	handleCreateSBT: () => void
 }
-interface Plugin {
+export interface Plugin {
 	id: string
 	name: string
 	selected: boolean
