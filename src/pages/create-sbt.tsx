@@ -316,7 +316,7 @@ const CreateSBT = () => {
 				signer
 			)
 			const diamondInitContract = new ethers.Contract(
-				'0xBB1aA056769D0b1639309f08480B8Bedc57BA9Ef',
+				'0xeFbF963506C986397FC92A63E0b173f25248BC99',
 				diamondInitABI,
 				signer
 			)
@@ -336,11 +336,22 @@ const CreateSBT = () => {
 							facetCuts[facetCuts.length - 1].functionSelectors
 						)
 						facetCuts.push({
-							facetAddress: '0x2688403dc98EB31f51eD3077274Cee8Cd8A9FFB7',
+							facetAddress: '0x6C6ECfdefd7401226a9B3D19AA3ABC2631d8B9a7',
 							action: 0,
 							functionSelectors: simpleGovernceSelecters,
 						})
 						break
+					}
+					case 'recovery_1': {
+						const recoverySelecters = getARemovedBSelectorsBySelector(
+							SignatureRecoveryFacetSelectors,
+							facetCuts[facetCuts.length - 1].functionSelectors
+						)
+						facetCuts.push({
+							facetAddress: '0x8558d078a1D3A1dbe9A0e96503Ea21c3DE573D55',
+							action: 0,
+							functionSelectors: recoverySelecters,
+						})
 					}
 				}
 			})

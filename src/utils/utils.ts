@@ -30,22 +30,22 @@ export const sbtSelector = [
 
 export const facetCuts = [
 	{
-		facetAddress: '0x883200ddCCefdCa7fA9aE31a48102a4513dEb1c5',
+		facetAddress: '0xeFbF963506C986397FC92A63E0b173f25248BC99',
 		action: 0,
 		functionSelectors: ['0x1f931c1c'],
 	},
 	{
-		facetAddress: '0x87a03CE475d7e6af28C25bF763ffF8b52A0fFadf',
+		facetAddress: '0xdf9479F11f28A6e887175df04E36E6848f27E32b',
 		action: 0,
 		functionSelectors: ['0xcdffacc6', '0x52ef6b2c', '0xadfca15e', '0x7a0ed627', '0x01ffc9a7'],
 	},
 	{
-		facetAddress: '0x6E393dEdd39046bE9C2d7F54B8666423502EA587',
+		facetAddress: '0x98275A685ea0513b4d6b83D1c53fE14F0f41ba57',
 		action: 0,
 		functionSelectors: ['0x8da5cb5b', '0xf2fde38b'],
 	},
 	{
-		facetAddress: '0x9418169acFd6d5453cA7eCc9c12dB0B27216f0E9',
+		facetAddress: '0x5895ce8E7C6530066903f727b8C454f502B5865B',
 		action: 0,
 		functionSelectors: [
 			'0x095ea7b3',
