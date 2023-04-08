@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Button } from '@/components/Button'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { useAccount } from 'wagmi'
+import { Modal } from '@mui/material'
 import { abi as diamondFactoryABI } from '@/abi/DiamondFactory.json'
 import { abi as diamondInitABI } from '@/abi/DiamondInit.json'
+import { pluginDesc } from './sbt/[contractAddress]'
 import {
 	facetCutsConst,
 	getARemovedBSelectorsBySelector,
@@ -28,6 +30,15 @@ export interface Plugin {
 	name: string
 	selected: boolean
 }
+
+const style = {
+	position: 'absolute' as 'absolute',
+	top: '50%',
+	left: '50%',
+	transform: 'translate(-50%, -50%)',
+	width: '600px',
+}
+
 const tokenstandardPlugins: Plugin[] = [
 	{ id: 'tokenstandard_1', name: 'ERC5192', selected: false },
 	{ id: 'tokenstandard_2', name: 'ERC5727', selected: false },
@@ -111,6 +122,8 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 	const [governance, setGovernance] = useState(governancePlugins)
 	const [recovery, setRecovery] = useState(recoveryPlugins)
 	const [verify, setVerify] = useState(verifyPlugins)
+	const [governaceOpen, setGovernanceOpen] = useState(false)
+	const [recoveryOpen, setRecoveryOpen] = useState(false)
 	const [tokenstandard, setTokenstandard] = useState(tokenstandardPlugins)
 	const handleBack = () => {
 		setStep(1)
@@ -152,6 +165,18 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 		}
 	}
 
+	const handleClickOpen = pluginId => {
+		console.log('pluginId', pluginId)
+		switch (pluginId) {
+			case 'governance_1':
+				setGovernanceOpen(true)
+				break
+			case 'recovery_1':
+				setRecoveryOpen(true)
+				break
+		}
+	}
+
 	return (
 		<>
 			<div className="flex bg-white dark:bg-gray-700 rounded w-full min-h-[600px] p-12 mt-12">
@@ -171,6 +196,9 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 														{...provided.draggableProps}
 														{...provided.dragHandleProps}
 														ref={provided.innerRef}
+														onClick={() => {
+															handleClickOpen(plugin.id)
+														}}
 													>
 														{plugin.name}
 														{provided.placeholder}
@@ -196,6 +224,9 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 														{...provided.draggableProps}
 														{...provided.dragHandleProps}
 														ref={provided.innerRef}
+														onClick={() => {
+															handleClickOpen(plugin.id)
+														}}
 													>
 														{plugin.name}
 														{provided.placeholder}
@@ -221,6 +252,9 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 														{...provided.draggableProps}
 														{...provided.dragHandleProps}
 														ref={provided.innerRef}
+														onClick={() => {
+															handleClickOpen(plugin.id)
+														}}
 													>
 														{plugin.name}
 														{provided.placeholder}
@@ -246,6 +280,9 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 														{...provided.draggableProps}
 														{...provided.dragHandleProps}
 														ref={provided.innerRef}
+														onClick={() => {
+															handleClickOpen(plugin.id)
+														}}
 													>
 														{plugin.name}
 														{provided.placeholder}
@@ -276,6 +313,9 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 													<div
 														key={v.id}
 														className="card flex items-center p-6 my-4 h-14 rounded-lg bg-gray-50 cursor-pointer hover:shadow-sm"
+														onClick={() => {
+															handleClickOpen(v.id)
+														}}
 													>
 														{v.name}
 													</div>
@@ -290,6 +330,34 @@ const PluginInfo = ({ setStep, setSelected, selected, handleCreateSBT }: PluginP
 					</div>
 				</DragDropContext>
 			</div>
+			<Modal
+				open={governaceOpen}
+				onClose={() => {
+					setGovernanceOpen(false)
+				}}
+			>
+				<div className="flex flex-col p-12 bg-white rounded-t w-[400px]" style={style}>
+					<div className="text-2xl">{pluginDesc.simpleGovernance.name}</div>
+					<div className="text-xl text-gray-400 mt-2">{pluginDesc.simpleGovernance.desc}</div>
+					<a href={pluginDesc.simpleGovernance.address} className="mt-4" target="_blank" rel="noreferrer">
+						Deployed address
+					</a>
+				</div>
+			</Modal>
+			<Modal
+				open={recoveryOpen}
+				onClose={() => {
+					setRecoveryOpen(false)
+				}}
+			>
+				<div className="flex flex-col p-12 bg-white rounded-t w-[400px]" style={style}>
+					<div className="text-2xl">{pluginDesc.signatureRecovery.name}</div>
+					<div className="text-xl text-gray-400 mt-2">{pluginDesc.signatureRecovery.desc}</div>
+					<a href={pluginDesc.signatureRecovery.address} target="_blank" rel="noreferrer">
+						Deployed address
+					</a>
+				</div>
+			</Modal>
 			<div className="flex items-center justify-center w-full mt-12 gap-5">
 				<Button onClick={() => handleBack()} style={{ width: '120px' }}>
 					Back
@@ -361,7 +429,6 @@ const CreateSBT = () => {
 					}
 				}
 			})
-			console.log(facetCuts)
 			diamondFactoryContract.once('DiamondDeployed', contractAddr => {
 				const res = JSON.parse(localStorage.getItem('SBT' + address)) || []
 				res.push({

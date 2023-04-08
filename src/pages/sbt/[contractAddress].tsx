@@ -7,14 +7,16 @@ import { ViewGridAddIcon } from '@heroicons/react/outline'
 import { Button } from '@/components/Button'
 import Modal from '@mui/material/Modal'
 
-const pluginInfo = {
+export const pluginDesc = {
 	simpleGovernance: {
 		name: 'Simple governace',
 		desc: 'a simple DAO with proposal creation, voting, and execution functionality to issue sbt.',
+		address: 'https://blockscout.scroll.io/address/0x6C6ECfdefd7401226a9B3D19AA3ABC2631d8B9a7',
 	},
 	signatureRecovery: {
 		name: 'Signature Recovery',
 		desc: 'allowing users to recover owned sbts from a signed message,The contract leverages EIP-712 for typed data hashing and ECDSA for signature recovery.',
+		address: 'https://blockscout.scroll.io/address/0x8558d078a1D3A1dbe9A0e96503Ea21c3DE573D55',
 	},
 }
 
@@ -39,12 +41,18 @@ export const SBT = () => {
 				new ethers.providers.Web3Provider(window.ethereum)
 			)
 			const res = await diamondContract.facetAddresses()
+
+			console.log(res)
+			let tmp = [...plugins]
 			if (res.includes('0x6C6ECfdefd7401226a9B3D19AA3ABC2631d8B9a7')) {
-				setPlugins([...plugins, 'simpleGovernance'])
+				console.log(plugins)
+				tmp = [...tmp, 'simpleGovernance']
 			}
 			if (res.includes('0x8558d078a1D3A1dbe9A0e96503Ea21c3DE573D55')) {
-				setPlugins([...plugins, 'signatureRecovery'])
+				tmp = [...tmp, 'signatureRecovery']
 			}
+			console.log(tmp)
+			setPlugins(tmp)
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [address, contractAddress])
@@ -66,9 +74,9 @@ export const SBT = () => {
 							className="block max-w-2xl p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 						>
 							<h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-								{pluginInfo[v].name}
+								{pluginDesc[v].name}
 							</h5>
-							<p className="font-normal text-gray-700 dark:text-gray-400">{pluginInfo[v].desc}</p>
+							<p className="font-normal text-gray-700 dark:text-gray-400">{pluginDesc[v].desc}</p>
 						</a>
 					)
 				})}
