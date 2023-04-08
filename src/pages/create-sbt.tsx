@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 import { abi as diamondFactoryABI } from '@/abi/DiamondFactory.json'
 import { abi as diamondInitABI } from '@/abi/DiamondInit.json'
 import {
-	facetCuts,
+	facetCutsConst,
 	getARemovedBSelectorsBySelector,
 	SimpleDAOFacetSelectors,
 	SignatureRecoveryFacetSelectors,
@@ -323,10 +323,10 @@ const CreateSBT = () => {
 			let functionCall = diamondInitContract.interface.encodeFunctionData('init')
 			const diamondArgs = {
 				owner: address,
-				init: '0xBB1aA056769D0b1639309f08480B8Bedc57BA9Ef',
+				init: '0xa2a438492eC98e58087e1D5cef284EDCBd022B0f',
 				initCalldata: functionCall,
 			}
-
+			const facetCuts = JSON.parse(JSON.stringify(facetCutsConst))
 			selected.forEach(plugin => {
 				switch (plugin.id) {
 					case 'governance_1': {
@@ -343,6 +343,7 @@ const CreateSBT = () => {
 						break
 					}
 					case 'recovery_1': {
+						console.log(plugin)
 						const recoverySelecters = getARemovedBSelectorsBySelector(
 							SignatureRecoveryFacetSelectors,
 							facetCuts[facetCuts.length - 1].functionSelectors
@@ -352,6 +353,7 @@ const CreateSBT = () => {
 							action: 0,
 							functionSelectors: recoverySelecters,
 						})
+						break
 					}
 				}
 			})

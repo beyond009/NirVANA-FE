@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { abi } from '../abi/DAOFacet.json'
+
 export const sbtSelector = [
 	'0x1f931c1c',
 	'0xcdffacc6',
