@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { abi } from '../abi/DAOFacet.json'
 
-export const sbtSelector = [
+export const SbtSelectorConst = [
 	'0x1f931c1c',
 	'0xcdffacc6',
 	'0x52ef6b2c',
@@ -29,7 +29,7 @@ export const sbtSelector = [
 	'0x23b872dd',
 ]
 
-export const facetCuts = [
+export const facetCutsConst = [
 	{
 		facetAddress: '0xeFbF963506C986397FC92A63E0b173f25248BC99',
 		action: 0,

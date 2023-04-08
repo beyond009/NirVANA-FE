@@ -9,6 +9,7 @@ import {
 	getARemovedBSelectorsBySelector,
 	SimpleDAOFacetSelectors,
 	SignatureRecoveryFacetSelectors,
+	SbtSelectorConst,
 } from '@/utils/utils'
 import { ethers } from 'ethers'
 import { toast } from 'react-toastify'
@@ -327,14 +328,16 @@ const CreateSBT = () => {
 				initCalldata: functionCall,
 			}
 			const facetCuts = JSON.parse(JSON.stringify(facetCutsConst))
+			const selecters = JSON.parse(JSON.stringify(SbtSelectorConst))
 			selected.forEach(plugin => {
 				switch (plugin.id) {
 					case 'governance_1': {
 						console.log(plugin)
 						const simpleGovernceSelecters = getARemovedBSelectorsBySelector(
 							SimpleDAOFacetSelectors,
-							facetCuts[facetCuts.length - 1].functionSelectors
+							selecters
 						)
+						selecters.push(...simpleGovernceSelecters)
 						facetCuts.push({
 							facetAddress: '0x6C6ECfdefd7401226a9B3D19AA3ABC2631d8B9a7',
 							action: 0,
@@ -346,8 +349,9 @@ const CreateSBT = () => {
 						console.log(plugin)
 						const recoverySelecters = getARemovedBSelectorsBySelector(
 							SignatureRecoveryFacetSelectors,
-							facetCuts[facetCuts.length - 1].functionSelectors
+							selecters
 						)
+						selecters.push(...recoverySelecters)
 						facetCuts.push({
 							facetAddress: '0x8558d078a1D3A1dbe9A0e96503Ea21c3DE573D55',
 							action: 0,
@@ -357,7 +361,7 @@ const CreateSBT = () => {
 					}
 				}
 			})
-
+			console.log(facetCuts)
 			diamondFactoryContract.once('DiamondDeployed', contractAddr => {
 				const res = JSON.parse(localStorage.getItem('SBT' + address)) || []
 				res.push({
